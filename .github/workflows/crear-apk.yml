@@ -1,13 +1,13 @@
 YAML
 
-name: Prueba
+name: Test
 
-on:
+on: 
   workflow_dispatch:
 
 jobs:
-  prueba:
+  test:
     runs-on: ubuntu-latest
     steps:
-      - name: Comprobar
-        run: echo "Funciona correctamente"
+      - name: Check
+        run: echo "It works"
