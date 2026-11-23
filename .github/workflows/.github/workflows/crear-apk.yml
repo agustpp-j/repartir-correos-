@@ -1,41 +1,11 @@
-name: Crear APK
+name: Test
 
 on:
   workflow_dispatch:
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     steps:
-      - name: Descargar proyecto
-        uses: actions/checkout@v4
-
-      - name: Preparar Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '17'
-
-      - name: Preparar Android
-        uses: android-actions/setup-android@v3
-
-      - name: Instalar Gradle
-        uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: '8.9'
-
-      - name: Descomprimir proyecto
-        run: |
-          ZIP_FILE=$(find . -maxdepth 1 -name '*.zip' | head -n1)
-          test -n "$ZIP_FILE"
-          unzip -q "$ZIP_FILE" -d proyecto
-
-      - name: Crear APK
-        run: gradle assembleDebug
-        working-directory: proyecto/WhatsAppRepartidor_Samsung_WhatsAppBusiness
-
-      - name: Descargar APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: Repartir-Correos-APK
-          path: proyecto/WhatsAppRepartidor_Samsung_WhatsAppBusiness/app/build/outputs/apk/debug/app-debug.apk
+      - name: Check
+        run: echo "It works"
