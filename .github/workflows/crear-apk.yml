@@ -1,43 +1,5 @@
 YAML
 
 name: Crear APK
-
-on: [workflow_dispatch]
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '17'
-
-      - uses: android-actions/setup-android@v3
-
-      - name: Comprobar archivos
-        run: |
-          echo "Archivos del repositorio:"
-          ls -la
-          echo "Archivos ZIP:"
-          find . -maxdepth 2 -name "*.zip"
-
-      - name: Compilar
-        run: |
-          mkdir proyecto
-          ZIP=$(find . -maxdepth 1 -name "*.zip" | head -n 1)
-          test -n "$ZIP"
-          unzip -q "$ZIP" -d proyecto
-          GRADLE=$(find proyecto -name gradlew -type f | head -n 1)
-          test -n "$GRADLE"
-          DIR=$(dirname "$GRADLE")
-          chmod +x "$GRADLE"
-          cd "$DIR"
-          ./gradlew assembleDebug
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: Repartir-Correos-APK
-          path: proyecto/**/app/build/outputs/apk/debug/app-debug.apk
+on: workflow_dispatch
+jobs: {}
