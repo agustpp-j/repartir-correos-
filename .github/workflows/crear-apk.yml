@@ -7,37 +7,54 @@ on:
 
 jobs:
   build:
+    name: Compilar aplicación Android
     runs-on: ubuntu-latest
+
     steps:
-      - name: Descargar proyecto
+      - name: Descargar repositorio
         uses: actions/checkout@v4
 
-      - name: Preparar Java
+      - name: Configurar Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
 
-      - name: Preparar Android
+      - name: Instalar Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Instalar Gradle
-        uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: '8.9'
+      - name: Buscar ZIP
+        id: zip
+        run: |
+          ZIP_FILE=$(find . -maxdepth 1 -name '*.zip' | head -n 1)
+          if [ -z "$ZIP_FILE" ]; then
+            echo "No se encuentra el ZIP"
+            exit 1
+          fi
+          echo "file=$ZIP_FILE" >> "$GITHUB_OUTPUT"
 
       - name: Descomprimir proyecto
         run: |
-          ZIP_FILE=$(find . -maxdepth 1 -name '*.zip' | head -n1)
-          test -n "$ZIP_FILE"
-          unzip -q "$ZIP_FILE" -d proyecto
+          mkdir proyecto
+          unzip -q "${{ steps.zip.outputs.file }}" -d proyecto
 
-      - name: Crear APK
-        run: gradle assembleDebug
-        working-directory: proyecto/WhatsAppRepartidor_Samsung_WhatsAppBusiness
+      - name: Localizar proyecto Android
+        run: |
+          find proyecto -name gradlew -type f
 
-      - name: Descargar APK
+      - name: Compilar APK
+        run: |
+          PROJECT_DIR=$(dirname "$(find proyecto -name gradlew -type f | head -n 1)")
+          if [ -z "$PROJECT_DIR" ]; then
+            echo "No se encuentra gradlew en el proyecto"
+            exit 1
+          fi
+          chmod +x "$PROJECT_DIR/gradlew"
+          cd "$PROJECT_DIR"
+          ./gradlew assembleDebug
+
+      - name: Guardar APK
         uses: actions/upload-artifact@v4
         with:
           name: Repartir-Correos-APK
-          path: proyecto/WhatsAppRepartidor_Samsung_WhatsAppBusiness/app/build/outputs/apk/debug/app-debug.apk
+          path: proyecto/**/app/build/outputs/apk/debug/app-debug.apk
