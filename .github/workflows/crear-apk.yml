@@ -1,5 +1,13 @@
 YAML
 
-name: Crear APK
-on: workflow_dispatch
-jobs: {}
+name: Prueba
+
+on:
+  workflow_dispatch:
+
+jobs:
+  prueba:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Comprobar
+        run: echo "Funciona correctamente"
